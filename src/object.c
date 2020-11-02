@@ -56,7 +56,8 @@ void S3_put_object(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         0,                                            // subResource
@@ -112,7 +113,8 @@ static S3Status copyObjectXmlCallback(const char *elementPath,
         if (!strcmp(elementPath, "CopyObjectResult/LastModified")) {
             string_buffer_append(coData->lastModified, data, dataLen, fit);
         }
-        else if (!strcmp(elementPath, "CopyObjectResult/ETag")) {
+        else if (!strcmp(elementPath, "CopyObjectResult/ETag")
+              || !strcmp(elementPath, "CopyPartResult/ETag")) {
             if (coData->eTagReturnSize && coData->eTagReturn) {
                 coData->eTagReturnLen +=
                     snprintf(&(coData->eTagReturn[coData->eTagReturnLen]),
@@ -251,7 +253,8 @@ void S3_copy_object_range(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         destinationKey ? destinationKey : key,        // key
         qp,                                           // queryParams
         0,                                            // subResource
@@ -295,7 +298,8 @@ void S3_get_object(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         0,                                            // subResource
@@ -337,7 +341,8 @@ void S3_head_object(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         0,                                            // subResource
@@ -379,7 +384,8 @@ void S3_delete_object(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         0,                                            // subResource

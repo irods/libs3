@@ -110,7 +110,7 @@ static void testBucketCompleteCallback(S3Status requestStatus,
     free(tbData);
 }
 
-void S3_test_bucket(S3Protocol protocol, S3UriStyle uriStyle,
+void S3_test_bucket(S3Protocol protocol, S3UriStyle uriStyle, S3STSDate stsDate,
                     const char *accessKeyId, const char *secretAccessKey,
                     const char *securityToken, const char *hostName,
                     const char *bucketName, const char *authRegion,
@@ -149,7 +149,8 @@ void S3_test_bucket(S3Protocol protocol, S3UriStyle uriStyle,
           accessKeyId,                                // accessKeyId
           secretAccessKey,                            // secretAccessKey
           securityToken,                              // securityToken
-          authRegion },                               // authRegion
+          authRegion,                                 // authRegion
+          stsDate },                                  // stsDate
         0,                                            // key
         0,                                            // queryParams
         "location",                                   // subResource
@@ -245,7 +246,8 @@ static S3Status createBucketFromS3Callback(int bufferSize, const char *buffer,
     return S3StatusOK;
 }
 
-void S3_create_bucket(S3Protocol protocol, const char *accessKeyId,
+void S3_create_bucket(S3Protocol protocol, S3STSDate stsDate,
+                      const char *accessKeyId,
                       const char *secretAccessKey, const char *securityToken,
                       const char *hostName, const char *bucketName,
                       const char *authRegion, S3CannedAcl cannedAcl,
@@ -304,7 +306,8 @@ void S3_create_bucket(S3Protocol protocol, const char *accessKeyId,
           accessKeyId,                                // accessKeyId
           secretAccessKey,                            // secretAccessKey
           securityToken,                              // securityToken
-          authRegion },                               // authRegion
+          authRegion,                                 // authRegion
+          stsDate },                                  // stsDate
         0,                                            // key
         0,                                            // queryParams
         0,                                            // subResource
@@ -361,7 +364,7 @@ static void deleteBucketCompleteCallback(S3Status requestStatus,
 }
 
 
-void S3_delete_bucket(S3Protocol protocol, S3UriStyle uriStyle,
+void S3_delete_bucket(S3Protocol protocol, S3UriStyle uriStyle, S3STSDate stsDate,
                       const char *accessKeyId, const char *secretAccessKey,
                       const char *securityToken, const char *hostName,
                       const char *bucketName, const char *authRegion,
@@ -392,7 +395,8 @@ void S3_delete_bucket(S3Protocol protocol, S3UriStyle uriStyle,
           accessKeyId,                                // accessKeyId
           secretAccessKey,                            // secretAccessKey
           securityToken,                              // securityToken
-          authRegion },                               // authRegion
+          authRegion,                                 // authRegion
+          stsDate },                                  // stsDate
         0,                                            // key
         0,                                            // queryParams
         0,                                            // subResource
@@ -756,7 +760,8 @@ void S3_list_bucket(const S3BucketContext *bucketContext, const char *prefix,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         0,                                            // key
         queryParams[0] ? queryParams : 0,             // queryParams
         0,                                            // subResource

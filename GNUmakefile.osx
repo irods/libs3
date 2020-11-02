@@ -143,7 +143,7 @@ CFLAGS += -Wall -Wunused-parameter -Wshadow -Wextra -Iinc \
           -D_ISOC99_SOURCE \
           -fno-common
 
-LDFLAGS = $(CURL_LIBS) $(LIBXML2_LIBS) -lpthread
+LDFLAGS += $(CURL_LIBS) $(LIBXML2_LIBS) -lpthread
 
 
 # --------------------------------------------------------------------------

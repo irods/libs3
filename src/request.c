@@ -77,14 +77,15 @@ typedef struct RequestComputedValues
     int amzHeadersCount;
 
     // Storage for amzHeaders (the +256 is for x-amz-acl and x-amz-date)
-    char amzHeadersRaw[COMPACTED_METADATA_BUFFER_SIZE + 256 + 1];
+    char amzHeadersRaw[COMPACTED_METADATA_BUFFER_SIZE + 256 + 129 + 1];   // added 129 for Date header
 
     // Length of populated data in raw buffer
     int amzHeadersRawLength;
 
     // Canonicalized headers for signature
     string_multibuffer(canonicalizedSignatureHeaders,
-                       COMPACTED_METADATA_BUFFER_SIZE + 256 + 1);
+                       //COMPACTED_METADATA_BUFFER_SIZE + 256 + 1);
+                       COMPACTED_METADATA_BUFFER_SIZE + 256 + 129 + 1);   // added 129 for Date header
 
     // Delimited list of header names used for signature
     char signedHeaders[COMPACTED_METADATA_BUFFER_SIZE];
@@ -106,6 +107,9 @@ typedef struct RequestComputedValues
 
     // Content-MD5 header (or empty)
     char md5Header[128];
+
+    // Date header (or empty)
+    char dateHeader [128];
 
     // Content-Disposition header (or empty)
     char contentDispositionHeader[128];
@@ -387,7 +391,16 @@ static S3Status compose_amz_headers(const RequestParams *params,
     }
 
     // Add the x-amz-date header
-    append_amz_header(values, 0, "x-amz-date", values->requestDateISO8601);
+    // Omit x-amz-date if required
+    //append_amz_header(values, 0, "x-amz-date", values->requestDateISO8601);
+    if(params->bucketContext.stsDate != S3STSDateOnly) {
+        append_amz_header(values, 0, "x-amz-date", values->requestDateISO8601);
+    }
+
+    // Capture the date for possible use in StringToSign
+    if (params->bucketContext.stsDate != S3STSAmzOnly) {
+        snprintf(values->dateHeader, sizeof(values->dateHeader),"Date: %s", values->requestDateISO8601);
+    }
 
     if (params->httpRequestType == HttpRequestTypeCOPY) {
         // Add the x-amz-copy-source header
@@ -977,6 +990,7 @@ static S3Status compose_auth_header(const RequestParams *params,
     buf_append(canonicalRequest, "%s\n", values->signedHeaders);
 
     buf_append(canonicalRequest, "%s", values->payloadHash);
+    //buf_append(canonicalRequest, "%s", values->dateHeader);
 
 #ifdef SIGNATURE_DEBUG
     printf("--\nCanonical Request:\n%s\n", canonicalRequest);
@@ -1255,6 +1269,7 @@ static S3Status setup_curl(Request *request,
     append_standard_header(cacheControlHeader);
     append_standard_header(contentTypeHeader);
     append_standard_header(md5Header);
+    append_standard_header(dateHeader);
     append_standard_header(contentDispositionHeader);
     append_standard_header(contentEncodingHeader);
     append_standard_header(expiresHeader);
@@ -1574,6 +1589,7 @@ void request_perform(const RequestParams *params, S3RequestContext *context)
 
     // These will hold the computed values
     RequestComputedValues computed;
+    //memset(&computed, 0, sizeof(computed));
 
     if ((status = setup_request(params, &computed, 0)) != S3StatusOK) {
         return_status(status);

@@ -144,7 +144,8 @@ void S3_get_acl(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         "acl",                                        // subResource
@@ -350,7 +351,8 @@ void S3_set_acl(const S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         "acl",                                        // subResource
@@ -458,7 +460,8 @@ void S3_get_lifecycle(const S3BucketContext *bucketContext,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         0,                                            // key
         0,                                            // queryParams
         "lifecycle",                                  // subResource
@@ -582,7 +585,8 @@ void S3_set_lifecycle(const S3BucketContext *bucketContext,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         0,                                            // key
         0,                                            // queryParams
         "lifecycle",                                  // subResource

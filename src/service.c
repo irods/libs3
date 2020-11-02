@@ -136,7 +136,7 @@ static void completeCallback(S3Status requestStatus,
 }
 
 
-void S3_list_service(S3Protocol protocol, const char *accessKeyId,
+void S3_list_service(S3Protocol protocol, S3STSDate stsDate, const char *accessKeyId,
                      const char *secretAccessKey, const char *securityToken,
                      const char *hostName, const char *authRegion,
                      S3RequestContext *requestContext,
@@ -176,7 +176,8 @@ void S3_list_service(S3Protocol protocol, const char *accessKeyId,
           accessKeyId,                                // accessKeyId
           secretAccessKey,                            // secretAccessKey
           securityToken,                              // securityToken
-          authRegion },                               // authRegion
+          authRegion,                                 // authRegion
+          stsDate },                                  // stsDate
         0,                                            // key
         0,                                            // queryParams
         0,                                            // subResource

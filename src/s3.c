@@ -72,6 +72,7 @@ static int retriesG = 5;
 static int timeoutMsG = 0;
 static int verifyPeerG = 0;
 static const char *awsRegionG = NULL;
+static S3STSDate stsDateG = S3STSAmzOnly;
 
 
 // Environment variables, saved as globals ----------------------------------
@@ -214,6 +215,7 @@ static void usageExit(FILE *out)
 "                          (default is 0)\n"
 "   -v/--verify-peer     : verify peer SSL certificate (default is no)\n"
 "   -g/--region <REGION> : use <REGION> for request authorization\n"
+"   -d/--date-header     : use date header in StringToSign (default is to use x-amz-date only)\n"
 "\n"
 "   Environment:\n"
 "\n"
@@ -767,6 +769,7 @@ static struct option longOptionsG[] =
     { "timeout",              required_argument,  0,  't' },
     { "verify-peer",          no_argument,        0,  'v' },
     { "region",               required_argument,  0,  'g' },
+    { "date-header",          no_argument,        0,  'd' },
     { 0,                      0,                  0,   0  }
 };
 
@@ -938,7 +941,7 @@ static void list_service(int allDetails)
     };
 
     do {
-        S3_list_service(protocolG, accessKeyIdG, secretAccessKeyG, 0, 0,
+        S3_list_service(protocolG, stsDateG, accessKeyIdG, secretAccessKeyG, 0, 0,
                         awsRegionG, 0, timeoutMsG, &listServiceHandler, &data);
     } while (S3_status_is_retryable(statusG) && should_retry());
 
@@ -981,7 +984,7 @@ static void test_bucket(int argc, char **argv, int optindex)
 
     char locationConstraint[64];
     do {
-        S3_test_bucket(protocolG, uriStyleG, accessKeyIdG, secretAccessKeyG, 0,
+        S3_test_bucket(protocolG, uriStyleG, stsDateG, accessKeyIdG, secretAccessKeyG, 0,
                        0, bucketName, awsRegionG, sizeof(locationConstraint),
                        locationConstraint, 0, timeoutMsG, &responseHandler, 0);
     } while (S3_status_is_retryable(statusG) && should_retry());
@@ -1080,7 +1083,7 @@ static void create_bucket(int argc, char **argv, int optindex)
     };
 
     do {
-        S3_create_bucket(protocolG, accessKeyIdG, secretAccessKeyG, 0, 0,
+        S3_create_bucket(protocolG, stsDateG, accessKeyIdG, secretAccessKeyG, 0, 0,
                          bucketName, awsRegionG, cannedAcl, locationConstraint,
                          0, 0, &responseHandler, 0);
     } while (S3_status_is_retryable(statusG) && should_retry());
@@ -1120,7 +1123,7 @@ static void delete_bucket(int argc, char **argv, int optindex)
     };
 
     do {
-        S3_delete_bucket(protocolG, uriStyleG, accessKeyIdG, secretAccessKeyG,
+        S3_delete_bucket(protocolG, uriStyleG, stsDateG, accessKeyIdG, secretAccessKeyG,
                          0, 0, bucketName, awsRegionG, 0, timeoutMsG, &responseHandler, 0);
     } while (S3_status_is_retryable(statusG) && should_retry());
 
@@ -1279,7 +1282,8 @@ static void list_bucket(const char *bucketName, const char *prefix,
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ListBucketHandler listBucketHandler =
@@ -1707,7 +1711,8 @@ static void list_multipart_uploads(int argc, char **argv, int optindex)
             accessKeyIdG,
             secretAccessKeyG,
             0,
-            awsRegionG
+            awsRegionG,
+            stsDateG
         };
 
         S3ListMultipartUploadsHandler listMultipartUploadsHandler =
@@ -1831,7 +1836,8 @@ static void list_parts(int argc, char **argv, int optindex)
             accessKeyIdG,
             secretAccessKeyG,
             0,
-            awsRegionG
+            awsRegionG,
+            stsDateG
         };
 
         S3ListPartsHandler listPartsHandler =
@@ -1930,7 +1936,8 @@ static void abort_multipart_upload(int argc, char **argv, int optindex)
             accessKeyIdG,
             secretAccessKeyG,
             0,
-            awsRegionG
+            awsRegionG,
+            stsDateG
         };
 
         S3AbortMultipartUploadHandler abortMultipartUploadHandler =
@@ -1994,7 +2001,8 @@ static void delete_object(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -2122,7 +2130,8 @@ static int try_get_parts_info(const char *bucketName, const char *key,
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ListPartsHandler listPartsHandler =
@@ -2389,7 +2398,8 @@ static void put_object(int argc, char **argv, int optindex,
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3PutProperties putProperties =
@@ -2521,7 +2531,8 @@ upload:
                         accessKeyIdG,
                         secretAccessKeyG,
                         0,
-                        awsRegionG
+                        awsRegionG,
+                        stsDateG
                     };
 
                     S3ResponseHandler copyResponseHandler = { &responsePropertiesCallback, &responseCompleteCallback };
@@ -2661,7 +2672,8 @@ static void copy_object(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
     S3ListBucketHandler listBucketHandler =
     {
@@ -2810,7 +2822,8 @@ static void copy_object(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3PutProperties putProperties =
@@ -2994,7 +3007,8 @@ static void get_object(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3GetConditions getConditions =
@@ -3070,7 +3084,8 @@ static void head_object(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3155,7 +3170,8 @@ static void generate_query_string(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     char buffer[S3_MAX_AUTHENTICATED_QUERY_STRING_SIZE];
@@ -3259,7 +3275,8 @@ void get_acl(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3425,7 +3442,8 @@ void set_acl(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3516,7 +3534,8 @@ void get_lifecycle(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3597,7 +3616,8 @@ void set_lifecycle(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3692,7 +3712,8 @@ void get_logging(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3861,7 +3882,8 @@ void set_logging(int argc, char **argv, int optindex)
         accessKeyIdG,
         secretAccessKeyG,
         0,
-        awsRegionG
+        awsRegionG,
+        stsDateG
     };
 
     S3ResponseHandler responseHandler =
@@ -3892,7 +3914,7 @@ int main(int argc, char **argv)
     // Parse args
     while (1) {
         int idx = 0;
-        int c = getopt_long(argc, argv, "vfhusr:t:g:", longOptionsG, &idx);
+        int c = getopt_long(argc, argv, "dvfhusr:t:g:", longOptionsG, &idx);
 
         if (c == -1) {
             // End of options
@@ -3937,6 +3959,9 @@ int main(int argc, char **argv)
             break;
         case 'g':
             awsRegionG = strdup(optarg);
+            break;
+        case 'd':
+            stsDateG = S3STSDateOnly;
             break;
         default:
             fprintf(stderr, "\nERROR: Unknown option: -%c\n", c);

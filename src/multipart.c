@@ -133,7 +133,8 @@ void S3_initiate_multipart(S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         "uploads",                                    // subResource
@@ -175,7 +176,8 @@ void S3_abort_multipart_upload(S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         0,                                            // queryParams
         subResource,                                  // subResource
@@ -224,7 +226,8 @@ void S3_upload_part(S3BucketContext *bucketContext, const char *key,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         queryParams,                                  // queryParams
         0,                                            // subResource
@@ -364,7 +367,8 @@ void S3_complete_multipart_upload(S3BucketContext *bucketContext,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         key,                                          // key
         queryParams,                                  // queryParams
         0,                                            // subResource
@@ -959,7 +963,8 @@ void S3_list_multipart_uploads(S3BucketContext *bucketContext,
               bucketContext->accessKeyId,            // accessKeyId
               bucketContext->secretAccessKey,        // secretAccessKey
               bucketContext->securityToken,          // securityToken
-              bucketContext->authRegion },           // authRegion
+              bucketContext->authRegion,             // authRegion
+              bucketContext->stsDate },              // stsDate
             0,                                       // key
             queryParams[0] ? queryParams : 0,        // queryParams
             "uploads",                               // subResource
@@ -1083,7 +1088,8 @@ void S3_list_parts(S3BucketContext *bucketContext, const char *key,
               bucketContext->accessKeyId,            // accessKeyId
               bucketContext->secretAccessKey,        // secretAccessKey
               bucketContext->securityToken,          // securityToken
-              bucketContext->authRegion },           // authRegion
+              bucketContext->authRegion,             // authRegion
+              bucketContext->stsDate },              // stsDate
             key,                                     // key
             queryParams[0] ? queryParams : 0,        // queryParams
             subResource,                             // subResource

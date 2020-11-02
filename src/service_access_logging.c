@@ -337,7 +337,8 @@ void S3_get_server_access_logging(const S3BucketContext *bucketContext,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         0,                                            // key
         0,                                            // queryParams
         "logging",                                    // subResource
@@ -545,7 +546,8 @@ void S3_set_server_access_logging(const S3BucketContext *bucketContext,
           bucketContext->accessKeyId,                 // accessKeyId
           bucketContext->secretAccessKey,             // secretAccessKey
           bucketContext->securityToken,               // securityToken
-          bucketContext->authRegion },                // authRegion
+          bucketContext->authRegion,                  // authRegion
+          bucketContext->stsDate },                   // stsDate
         0,                                            // key
         0,                                            // queryParams
         "logging",                                    // subResource
