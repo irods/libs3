@@ -399,7 +399,7 @@ static S3Status compose_amz_headers(const RequestParams *params,
         if (params->byteCount > 0) {
             headers_append(1, "x-amz-copy-source-range: bytes=%lld-%lld",
                            (unsigned long long) params->startByte,
-                           (unsigned long long) (params->startByte + params->byteCount) );
+                           (unsigned long long) (params->startByte + params->byteCount - 1) );
         }
         // And the x-amz-metadata-directive header
         if (properties) {
