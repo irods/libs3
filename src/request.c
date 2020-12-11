@@ -1254,8 +1254,10 @@ static S3Status setup_curl(Request *request,
     }
 
     // Would use CURLOPT_INFILESIZE_LARGE, but it is buggy in libcurl
+    // jjames - added HttpRequestTypeCOPY because Ceph S3 requires it
     if ((params->httpRequestType == HttpRequestTypePUT) ||
-        (params->httpRequestType == HttpRequestTypePOST)) {
+        (params->httpRequestType == HttpRequestTypePOST) ||
+         params->httpRequestType == HttpRequestTypeCOPY) {
         char header[256];
         snprintf(header, sizeof(header), "Content-Length: %llu",
                  (unsigned long long) params->toS3CallbackTotalSize);
