@@ -1265,10 +1265,6 @@ static S3Status setup_curl(Request *request,
         request->headers = curl_slist_append(request->headers,
                                              "Transfer-Encoding:");
     }
-    else if (params->httpRequestType == HttpRequestTypeCOPY) {
-        request->headers = curl_slist_append(request->headers,
-                                             "Transfer-Encoding:");
-    }
 
     append_standard_header(hostHeader);
     append_standard_header(cacheControlHeader);
